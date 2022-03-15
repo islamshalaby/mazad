@@ -1,7 +1,8 @@
 <?php
     return [
         //new
-
+        'statuschanged' => 'status changes successfully',
+        'hidden_show' => "hidden / show",
 
 
 

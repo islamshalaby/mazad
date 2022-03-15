@@ -1,6 +1,7 @@
 <?php
 return [
-    //new
+    'statuschanged' => 'تم تعديل الحالة بنجاح',
+    'hidden_show' => "اخفاء / اظهار",
     'category_image' => "صوره القسم",
     'offers_cover' => "غلاف العروض",
     'mazad_times' => "أوقات المزايدة",

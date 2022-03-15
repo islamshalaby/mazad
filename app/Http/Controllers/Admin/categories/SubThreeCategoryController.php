@@ -14,6 +14,13 @@ class SubThreeCategoryController extends AdminController
     {
 
     }
+
+    public function change_is_show(Request $request){
+        $data['is_show'] = $request->status ;
+        SubThreeCategory::where('id', $request->id)->update($data);
+        return 1;
+    }
+    
     public function create($id)
     {
         return view('admin.categories.sub_category.sub_two_category.sub_three_category.create',compact('id'));

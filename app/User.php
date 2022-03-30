@@ -8,6 +8,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class User extends Authenticatable implements JWTSubject
 {
+    protected $appends = ['last_visitor'];
     protected $fillable = [
         'name',
         'phone',
@@ -53,5 +54,10 @@ class User extends Authenticatable implements JWTSubject
 
     public function products() {
         return $this->hasMany('App\Product', 'user_id');
+    }
+
+    public function getLastVisitorAttribute() {
+        $data = Visitor::where('user_id', $this->id)->latest('updated_at')->select('id', 'fcm_token')->first();
+        return $data;
     }
 }

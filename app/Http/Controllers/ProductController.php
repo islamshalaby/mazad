@@ -190,6 +190,7 @@ class ProductController extends Controller
             return response()->json($response, 406);
         }
         $product = Product::find($request->product_id);
+        // dd($product->status);
         if ($product->status == 2) {
             $response = APIHelpers::createApiResponse(true, 406, 'mazad has been ended', 'لا يمكن المزايدة  ....  تم انتهاء المزاد', null, $lang);
             return response()->json($response, 406);
@@ -200,6 +201,34 @@ class ProductController extends Controller
             if ($product->user_id != $user->id) {
                 $data['user_id'] = $user->id;
                 Product_mazad::create($data);
+                $title = 'New auction';
+                $body = "$user->name has posted a new bid $product->title";
+                if ($request->lang == 'ar') {
+                    $title = 'مزايدة جديدة';
+                    $body = "$user->name قد أعلن عن مزايدة جديدة $product->title";
+                }
+
+                $users = User::where('id', '!=', $user->id)->select('id')->get();
+                $users_fcm = [];
+                $notification = new Notification();
+                $notification->title = $title;
+                $notification->body = $body;
+                $notification->save();
+                if (count($users) > 0) {
+                    for ($i = 0; $i < count($users); $i ++) {
+                        if (!empty($users[$i]->last_visitor)) {
+                            $user_notification = new UserNotification();
+                            $user_notification->user_id = $users[$i]->id;
+                            $user_notification->notification_id = $notification->id;
+                            $user_notification->visitor_id = $users[$i]->last_visitor->id;
+                            $user_notification->save();
+                            array_push($users_fcm, $users[$i]->last_visitor->fcm_token);
+                        }
+                    }
+                }
+                
+                $notificationss = APIHelpers::send_notification($title , $body , null , null , $users_fcm);
+                // dd($notificationss);
                 $response = APIHelpers::createApiResponse(false, 200, 'mazad make successfully', 'تم المزايدة بنجاح', null, $lang);
                 return response()->json($response, 200);
             } else {

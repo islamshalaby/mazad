@@ -32,6 +32,7 @@ use App\User;
 use App\Plan;
 use App\City;
 use App\Area;
+use App\Visitor;
 use Exception;
 
 class ProductController extends Controller
@@ -201,13 +202,29 @@ class ProductController extends Controller
             if ($product->user_id != $user->id) {
                 $data['user_id'] = $user->id;
                 Product_mazad::create($data);
-                $title = 'New auction';
-                $body = "$user->name has posted a new bid $product->title";
+                $title = 'New bidding';
+                $body = "Bidding has been created on $product->title";
                 if ($request->lang == 'ar') {
                     $title = 'مزايدة جديدة';
-                    $body = "$user->name قد أعلن عن مزايدة جديدة $product->title";
+                    $body = "تم عمل مزايدة على $product->title";
                 }
 
+                $visitor = Visitor::where('user_id', $user->id)->latest('updated_at')->first();
+                if ($visitor && !empty($visitor->fcm_token)) {
+                    $notification = new Notification();
+                    $notification->title = $title;
+                    $notification->body = $body;
+                    $notification->save();
+                    $user_notification = new UserNotification();
+                    $user_notification->user_id = $user->id;
+                    $user_notification->notification_id = $notification->id;
+                    $user_notification->visitor_id = $visitor->id;
+                    $user_notification->save();
+
+                    $notificationss = APIHelpers::send_notification($title , $body , null , null , [$visitor->fcm_token]);
+                }
+                
+                
                 // $users = User::where('id', '!=', $user->id)->select('id')->get();
                 // $users_fcm = [];
                 // $notification = new Notification();

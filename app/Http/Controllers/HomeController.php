@@ -170,6 +170,7 @@ class HomeController extends Controller
             ->with('Sub_categories')
 //            ->with('Category_ads')
             ->where('deleted', 0)
+            ->where('is_show', 1)
             ->select('id', 'title_' . $lang . ' as title', 'desc_' . $lang . ' as description')
             ->get()->map(function ($data) use ($user) {
                 $data->mazad_count = Product::where('category_id', $data->id)->where('status', 1)->where('publish', 'Y')->where('deleted', 0)->get()->count();

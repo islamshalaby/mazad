@@ -18,9 +18,13 @@ class WebViewController extends Controller
     // get terms and conditions
     public function gettermsandconditions(Request $request, $lang){
         $setting = Setting::find(1);
-
-            $data['title'] = 'الشروط و الأحكام';
-            $data['text'] = $setting['termsandconditions_ar'];
+            $data['title'] = "Terms & Conditions";
+            if ($lang == 'ar') {
+                $data['title'] = 'الشروط و الأحكام';
+            }
+            
+            $data['text'] = $setting['termsandconditions_' . $lang];
+            
 		$data['lang'] = $lang;
         return view('webview.termsandconditions' , ['data' => $data]);
     }

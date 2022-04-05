@@ -10,7 +10,7 @@ class WebViewController extends Controller
     // get about
     public function getabout(Request $request, $lang){
         $setting = Setting::find(1);
-        $data['text'] = $setting['aboutapp_ar'];
+        $data['text'] = $setting['aboutapp_' . $lang];
 		$data['lang'] = $lang;
         return view('webview.about' , ['data' => $data]);
     }

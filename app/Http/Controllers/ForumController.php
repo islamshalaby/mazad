@@ -14,7 +14,7 @@ class ForumController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('auth:api' , ['except' => [ 'all_forum']]);
+        $this->middleware('auth:api' , ['except' => [ 'all_forum', 'Forum_details']]);
     }
 
     public function all_forum(Request $request){
